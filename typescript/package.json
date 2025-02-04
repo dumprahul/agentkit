@@ -9,15 +9,16 @@
     "typescript/examples/langchain-farcaster-chatbot"
   ],
   "scripts": {
-    "build": "pnpm --filter \"./agentkit/**\" --filter \"./examples/**\" --filter \"./framework-extensions/**\" build",
-    "test": "pnpm --filter \"./agentkit/**\" --filter \"./examples/**\" --filter \"./framework-extensions/**\" test",
-    "lint": "pnpm --filter \"./agentkit/**\" --filter \"./examples/**\" --filter \"./framework-extensions/**\" lint",
-    "clean": "pnpm --filter \"./agentkit/**\" --filter \"./examples/**\" --filter \"./framework-extensions/**\" clean",
-    "docs": "pnpm --filter \"./agentkit/**\" --filter \"./examples/**\" --filter \"./framework-extensions/**\" docs",
-    "dev": "pnpm --filter \"./agentkit/**\" --filter \"./examples/**\" --filter \"./framework-extensions/**\" dev",
-    "format": "pnpm --filter \"./agentkit/**\" --filter \"./examples/**\" --filter \"./framework-extensions/**\" format",
-    "format:check": "pnpm --filter \"./agentkit/**\" --filter \"./examples/**\" --filter \"./framework-extensions/**\" format:check",
-    "lint:fix": "pnpm --filter \"./agentkit/**\" --filter \"./examples/**\" --filter \"./framework-extensions/**\" lint:fix"
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "docs": "turbo run docs",
+    "dev": "turbo run dev",
+    "format": "turbo run format",
+    "format:check": "turbo run format:check",
+    "lint:fix": "turbo run lint:fix",
+    "test:types": "turbo run test:types"
   },
   "packageManager": "pnpm@10.2.0",
   "author": "Coinbase Inc.",
