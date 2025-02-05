@@ -1,19 +1,22 @@
 from decimal import Decimal
-from typing import Dict, Any
+from typing import Any
+
 from pydantic import BaseModel
 
-from ..action_provider import ActionProvider
-from ..action_decorator import CreateAction
-from ...wallet_providers import WalletProvider
 from ...network import Network
+from ...wallet_providers import WalletProvider
+from ..action_decorator import CreateAction
+from ..action_provider import ActionProvider
+
 
 class GetWalletDetailsSchema(BaseModel):
     """Input schema for getting wallet details."""
+
     pass
 
 class WalletActionProvider(ActionProvider[WalletProvider]):
     """Provides actions for interacting with wallet functionality."""
-    
+
     def __init__(self):
         super().__init__("wallet", [])
 
@@ -31,7 +34,7 @@ class WalletActionProvider(ActionProvider[WalletProvider]):
     )
     def get_wallet_details(
         self,
-        args: Dict[str, Any]
+        args: dict[str, Any]
     ) -> str:
         """Get details about the wallet."""
         try:
@@ -39,14 +42,14 @@ class WalletActionProvider(ActionProvider[WalletProvider]):
             network = self.wallet_provider.get_network()
             balance = self.wallet_provider.get_balance()
             provider_name = self.wallet_provider.get_name()
-            
+
             # Convert balance from Wei to ETH
             eth_balance = Decimal(str(balance)) / Decimal('1000000000000000000')
-            
+
             return f"""Wallet Details:
 - Provider: {provider_name}
 - Address: {wallet_address}
-- Network: 
+- Network:
   * Protocol Family: {network.protocol_family}
   * Network ID: {network.network_id or "N/A"}
   * Chain ID: {str(network.chain_id) if network.chain_id else "N/A"}

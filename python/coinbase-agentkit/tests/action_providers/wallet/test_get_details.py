@@ -1,13 +1,14 @@
-import pytest
 from decimal import Decimal
 from unittest.mock import Mock
 
+import pytest
+
+from coinbase_agentkit.action_providers.wallet.wallet_action_provider import (
+    GetWalletDetailsSchema,
+    WalletActionProvider,
+)
 from coinbase_agentkit.network import Network
 from coinbase_agentkit.wallet_providers import WalletProvider
-from coinbase_agentkit.action_providers.wallet.wallet_action_provider import (
-    WalletActionProvider,
-    GetWalletDetailsSchema
-)
 
 MOCK_ADDRESS = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
 MOCK_BALANCE = Decimal("1000000000000000000")  # 1 ETH in wei
@@ -43,11 +44,11 @@ def test_get_wallet_details_schema_valid():
 def test_get_wallet_details_success(wallet_action_provider):
     """Test successful get wallet details with valid parameters."""
     result = wallet_action_provider.get_wallet_details({})
-    
+
     expected_response = f"""Wallet Details:
 - Provider: {MOCK_PROVIDER_NAME}
 - Address: {MOCK_ADDRESS}
-- Network: 
+- Network:
   * Protocol Family: {MOCK_NETWORK.protocol_family}
   * Network ID: {MOCK_NETWORK.network_id or "N/A"}
   * Chain ID: {str(MOCK_NETWORK.chain_id) if MOCK_NETWORK.chain_id else "N/A"}
@@ -63,9 +64,9 @@ def test_get_wallet_details_missing_network_ids(wallet_action_provider, mock_wal
         chain_id=None,
         network_id=None
     )
-    
+
     result = wallet_action_provider.get_wallet_details({})
-    
+
     assert "Network ID: N/A" in result
     assert "Chain ID: N/A" in result
 
@@ -73,7 +74,7 @@ def test_get_wallet_details_error(wallet_action_provider, mock_wallet_provider):
     """Test error handling in get wallet details."""
     error_message = "Failed to get wallet details"
     mock_wallet_provider.get_balance.side_effect = Exception(error_message)
-    
+
     result = wallet_action_provider.get_wallet_details({})
     assert result == f"Error getting wallet details: {error_message}"
 
@@ -84,7 +85,7 @@ def test_supports_network(wallet_action_provider):
         Network(protocol_family="solana", chain_id=None, network_id="mainnet"),
         Network(protocol_family="bitcoin", chain_id=None, network_id="mainnet")
     ]
-    
+
     for network in networks:
         assert wallet_action_provider.supports_network(network) is True
 
