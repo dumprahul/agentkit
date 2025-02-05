@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from ...network import Network
 from ...wallet_providers import WalletProvider
@@ -13,6 +13,13 @@ class GetWalletDetailsSchema(BaseModel):
     """Input schema for getting wallet details."""
 
     pass
+
+
+class GetBalanceSchema(BaseModel):
+    """Input schema for getting wallet balance."""
+
+    asset_id: str = Field(..., description="The asset ID to get the balance for (e.g. 'eth' for native ETH)")
+
 
 class WalletActionProvider(ActionProvider[WalletProvider]):
     """Provides actions for interacting with wallet functionality."""
@@ -52,6 +59,28 @@ class WalletActionProvider(ActionProvider[WalletProvider]):
 - Native Balance: {balance}"""
         except Exception as e:
             return f"Error getting wallet details: {e}"
+
+    @CreateAction(
+        name="get_balance",
+        description="""
+    This tool will get the balance of the connected wallet for a given asset.
+    It takes the asset ID as input. Use 'eth' for the native asset ETH.
+    """,
+        schema=GetBalanceSchema
+    )
+    def get_balance(
+        self,
+        args: dict[str, Any]
+    ) -> str:
+        """Get balance for the wallet for a given asset."""
+        try:
+            asset_id = args["asset_id"]
+            balance = self.wallet_provider.get_balance()
+            wallet_address = self.wallet_provider.get_address()
+            
+            return f"Balance for {asset_id.upper()} at address {wallet_address}: {balance} WEI"
+        except Exception as e:
+            return f"Error getting balance: {e}"
 
     def supports_network(self, network: Network) -> bool:
         """Check if network is supported by wallet actions."""
