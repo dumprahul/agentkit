@@ -29,7 +29,7 @@ class WalletActionProvider(ActionProvider[WalletProvider]):
     """,
         schema=GetWalletDetailsSchema
     )
-    async def get_wallet_details(
+    def get_wallet_details(
         self,
         args: Dict[str, Any]
     ) -> str:
@@ -37,7 +37,7 @@ class WalletActionProvider(ActionProvider[WalletProvider]):
         try:
             wallet_address = self.wallet_provider.get_address()
             network = self.wallet_provider.get_network()
-            balance = await self.wallet_provider.get_balance()
+            balance = self.wallet_provider.get_balance()
             provider_name = self.wallet_provider.get_name()
             
             # Convert balance from Wei to ETH

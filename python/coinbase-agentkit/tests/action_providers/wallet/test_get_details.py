@@ -1,6 +1,6 @@
 import pytest
 from decimal import Decimal
-from unittest.mock import Mock, AsyncMock
+from unittest.mock import Mock
 
 from coinbase_agentkit.network import Network
 from coinbase_agentkit.wallet_providers import WalletProvider
@@ -24,7 +24,7 @@ def mock_wallet_provider():
     mock = Mock(spec=WalletProvider)
     mock.get_address.return_value = MOCK_ADDRESS
     mock.get_network.return_value = MOCK_NETWORK
-    mock.get_balance = AsyncMock(return_value=MOCK_BALANCE)
+    mock.get_balance.return_value = MOCK_BALANCE
     mock.get_name.return_value = MOCK_PROVIDER_NAME
     return mock
 
@@ -40,25 +40,23 @@ def test_get_wallet_details_schema_valid():
     schema = GetWalletDetailsSchema()
     assert isinstance(schema, GetWalletDetailsSchema)
 
-@pytest.mark.asyncio
-async def test_get_wallet_details_success(wallet_action_provider):
+def test_get_wallet_details_success(wallet_action_provider):
     """Test successful get wallet details with valid parameters."""
-    result = await wallet_action_provider.get_wallet_details({})
+    result = wallet_action_provider.get_wallet_details({})
     
     expected_response = f"""Wallet Details:
 - Provider: {MOCK_PROVIDER_NAME}
 - Address: {MOCK_ADDRESS}
 - Network: 
   * Protocol Family: {MOCK_NETWORK.protocol_family}
-  * Network ID: {MOCK_NETWORK.network_id}
-  * Chain ID: {MOCK_NETWORK.chain_id}
+  * Network ID: {MOCK_NETWORK.network_id or "N/A"}
+  * Chain ID: {str(MOCK_NETWORK.chain_id) if MOCK_NETWORK.chain_id else "N/A"}
 - ETH Balance: 1.000000 ETH
 - Native Balance: {MOCK_BALANCE} WEI"""
 
     assert result == expected_response
 
-@pytest.mark.asyncio
-async def test_get_wallet_details_missing_network_ids(wallet_action_provider, mock_wallet_provider):
+def test_get_wallet_details_missing_network_ids(wallet_action_provider, mock_wallet_provider):
     """Test handling of missing network IDs."""
     mock_wallet_provider.get_network.return_value = Network(
         protocol_family="evm",
@@ -66,18 +64,17 @@ async def test_get_wallet_details_missing_network_ids(wallet_action_provider, mo
         network_id=None
     )
     
-    result = await wallet_action_provider.get_wallet_details({})
+    result = wallet_action_provider.get_wallet_details({})
     
     assert "Network ID: N/A" in result
     assert "Chain ID: N/A" in result
 
-@pytest.mark.asyncio
-async def test_get_wallet_details_error(wallet_action_provider, mock_wallet_provider):
+def test_get_wallet_details_error(wallet_action_provider, mock_wallet_provider):
     """Test error handling in get wallet details."""
     error_message = "Failed to get wallet details"
     mock_wallet_provider.get_balance.side_effect = Exception(error_message)
     
-    result = await wallet_action_provider.get_wallet_details({})
+    result = wallet_action_provider.get_wallet_details({})
     assert result == f"Error getting wallet details: {error_message}"
 
 def test_supports_network(wallet_action_provider):
