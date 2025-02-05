@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from ...network import Network
 from ...wallet_providers import WalletProvider
@@ -16,9 +16,9 @@ class GetWalletDetailsSchema(BaseModel):
 
 
 class GetBalanceSchema(BaseModel):
-    """Input schema for getting wallet balance."""
+    """Input schema for getting native currency balance."""
 
-    asset_id: str = Field(..., description="The asset ID to get the balance for (e.g. 'eth' for native ETH)")
+    pass
 
 
 class WalletActionProvider(ActionProvider[WalletProvider]):
@@ -62,23 +62,19 @@ class WalletActionProvider(ActionProvider[WalletProvider]):
 
     @CreateAction(
         name="get_balance",
-        description="""
-    This tool will get the balance of the connected wallet for a given asset.
-    It takes the asset ID as input. Use 'eth' for the native asset ETH.
-    """,
+        description="This tool will get the native currency balance of the connected wallet.",
         schema=GetBalanceSchema
     )
     def get_balance(
         self,
         args: dict[str, Any]
     ) -> str:
-        """Get balance for the wallet for a given asset."""
+        """Get native currency balance for the wallet."""
         try:
-            asset_id = args["asset_id"]
             balance = self.wallet_provider.get_balance()
             wallet_address = self.wallet_provider.get_address()
             
-            return f"Balance for {asset_id.upper()} at address {wallet_address}: {balance} WEI"
+            return f"Native balance at address {wallet_address}: {balance}"
         except Exception as e:
             return f"Error getting balance: {e}"
 

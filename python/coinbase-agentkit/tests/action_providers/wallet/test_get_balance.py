@@ -35,15 +35,14 @@ def wallet_action_provider(mock_wallet_provider):
     return provider
 
 def test_get_balance_schema_valid():
-    """Test that GetBalanceSchema accepts valid parameters."""
-    schema = GetBalanceSchema(asset_id="eth")
+    """Test that GetBalanceSchema is valid with no parameters."""
+    schema = GetBalanceSchema()
     assert isinstance(schema, GetBalanceSchema)
-    assert schema.asset_id == "eth"
 
 def test_get_balance_success(wallet_action_provider):
-    """Test successful get balance with valid parameters."""
-    result = wallet_action_provider.get_balance({"asset_id": "eth"})
-    expected = f"Balance for ETH at address {MOCK_ADDRESS}: {MOCK_BALANCE} WEI"
+    """Test successful get balance."""
+    result = wallet_action_provider.get_balance({})
+    expected = f"Native balance at address {MOCK_ADDRESS}: {MOCK_BALANCE}"
     assert result == expected
 
 def test_get_balance_error(wallet_action_provider, mock_wallet_provider):
@@ -51,11 +50,5 @@ def test_get_balance_error(wallet_action_provider, mock_wallet_provider):
     error_message = "Failed to get balance"
     mock_wallet_provider.get_balance.side_effect = Exception(error_message)
 
-    result = wallet_action_provider.get_balance({"asset_id": "eth"})
+    result = wallet_action_provider.get_balance({})
     assert result == f"Error getting balance: {error_message}"
-
-def test_get_balance_with_different_asset(wallet_action_provider):
-    """Test get balance with a different asset ID."""
-    result = wallet_action_provider.get_balance({"asset_id": "usdc"})
-    expected = f"Balance for USDC at address {MOCK_ADDRESS}: {MOCK_BALANCE} WEI"
-    assert result == expected
