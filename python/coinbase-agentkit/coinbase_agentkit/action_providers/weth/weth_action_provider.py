@@ -23,9 +23,8 @@ class WrapEthSchema(BaseModel):
         if not re.match(r"^[0-9]+$", v):
             raise ValueError("Amount must be a whole number as a string")
         
-        # Check minimum amount using integer comparison
         if int(v) < MIN_WRAP_AMOUNT:
-            raise ValueError(f"Amount must be at least {MIN_WRAP_AMOUNT} wei (0.0001 ETH)")
+            raise ValueError(f"Amount must be at least {MIN_WRAP_AMOUNT} wei (0.0001 WETH)")
         
         return v
 
