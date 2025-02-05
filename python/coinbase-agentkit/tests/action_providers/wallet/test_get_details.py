@@ -52,7 +52,7 @@ def test_get_wallet_details_success(wallet_action_provider):
   * Protocol Family: {MOCK_NETWORK.protocol_family}
   * Network ID: {MOCK_NETWORK.network_id or "N/A"}
   * Chain ID: {str(MOCK_NETWORK.chain_id) if MOCK_NETWORK.chain_id else "N/A"}
-- Native Balance: {MOCK_BALANCE} WEI"""
+- Native Balance: {MOCK_BALANCE}"""
 
     assert result == expected_response
 
