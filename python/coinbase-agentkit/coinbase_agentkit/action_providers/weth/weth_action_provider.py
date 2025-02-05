@@ -69,8 +69,7 @@ Important notes:
             str: A message containing the transaction hash.
         """
         try:
-            w3 = Web3()
-            contract = w3.eth.contract(address=WETH_ADDRESS, abi=WETH_ABI)
+            contract = Web3().eth.contract(address=WETH_ADDRESS, abi=WETH_ABI)
             data = contract.encode_abi("deposit", args=[])
 
             tx_hash = wallet_provider.send_transaction({
