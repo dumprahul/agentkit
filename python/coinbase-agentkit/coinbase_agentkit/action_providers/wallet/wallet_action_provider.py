@@ -26,7 +26,6 @@ class WalletActionProvider(ActionProvider[WalletProvider]):
     This tool will return the details of the connected wallet including:
     - Wallet address
     - Network information (protocol family, network ID, chain ID)
-    - ETH token balance
     - Native token balance
     - Wallet provider name
     """,
@@ -43,9 +42,6 @@ class WalletActionProvider(ActionProvider[WalletProvider]):
             balance = self.wallet_provider.get_balance()
             provider_name = self.wallet_provider.get_name()
 
-            # Convert balance from Wei to ETH
-            eth_balance = Decimal(str(balance)) / Decimal('1000000000000000000')
-
             return f"""Wallet Details:
 - Provider: {provider_name}
 - Address: {wallet_address}
@@ -53,7 +49,6 @@ class WalletActionProvider(ActionProvider[WalletProvider]):
   * Protocol Family: {network.protocol_family}
   * Network ID: {network.network_id or "N/A"}
   * Chain ID: {str(network.chain_id) if network.chain_id else "N/A"}
-- ETH Balance: {eth_balance:.6f} ETH
 - Native Balance: {balance} WEI"""
         except Exception as e:
             return f"Error getting wallet details: {e}"
